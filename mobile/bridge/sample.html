@@ -5,31 +5,58 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+        html,
+        body {
+          width: 100%;
+          height: 100%;
+        }
+        .container {
+          width: 100%;          
+          height: 90%;
+          background: pink;
+        }
+    </style>
+
 </head>
 <body>
+    <div class="container">
 
-    <table style="border-collapse: collapse; width: 100%; height: 200px;" border="1">
-        <tbody>    
-            <tr style="height: 82px;">        
-                <td style="width: 100%; height: 82px;">
-
-                    <textarea style="height: 90%;width:95%;margin:10px;" >
-
-                    </textarea>
-                </td>    
-            </tr>
+        <table style="border-collapse: collapse;width: 100%; height:100%; padding:20px" border="1">
+            <tbody>    
+                <tr style="height:40px;width: 90%;text-align: center;"> 
+                   <td>테스트 <td>       
+                </tr>
     
-            <tr style="height: 18px;">                            
-                <td style="width: 100%; height: 18px;">&nbsp;                
-                    <button id="showKeypad">showKeypad</button>                
-                    <button id="closeKeypad">closeKeypad</button>      
-                    <button id="openCamera">openCamera</button>
-                    <button id="getMobileInfo">getMobileInfo</button>                            
-                </td>            
-            </tr>    
-        </tbody>
-    </table>
+                <tr>        
+                    <td>    
+                        <textarea id="inputText" style="height: 90%;width:90%;margin:20px;" >
+    
+                        </textarea>
+                    </td>    
+                </tr>
+        
+                <tr style="height: 20px;">                            
+                    <td>&nbsp;                
+                                               
+                    </td>            
+                </tr>    
 
+                <tr style="height: 20px;">                            
+                    <td>&nbsp;                
+                        <button id="showKeypad">show_K</button>                
+                        <button id="closeKeypad">close_K</button>      
+                        <button id="openCamera">open_C</button>
+                        <button id="openImageBrowser">open_B</button>
+                        <button id="getMobileInfo">get_Info</button>                                                
+                    </td>            
+                </tr>    
+                               
+            </tbody>
+        </table>
+                
+    </div>   
     <script src="sample.js"></script>
 </body>
 </html>
