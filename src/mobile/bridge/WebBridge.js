@@ -23,7 +23,8 @@ class WebBridge {
             }
         }
         function _callBridge(bridge, {command, payload, subscribe}) {
-            const seq = new Date().getTime();
+            // const seq = new Date().getTime();
+            const seq = 11223344;
             Object.assign(messageMap, {
                 [seq]: arg=> (subscribe && subscribe(arg))
             })
