@@ -20,11 +20,14 @@ interface BridgeMessage {
 type PromiseFunction = (arg?: unknown) => void;
 
 class WebBridge {
+    private static instance: WebBridge;
     static connect(name: string, option: Option = {}) {
-        const bridge: any = window[name] || {};
-        if(bridge.sendMessage) return;
-
-        (window as any)[name] = new WebBridge(name, option);
+        if(!WebBridge.instance) {
+            WebBridge.instance = (window as any)[name] = new WebBridge(name, option);
+        }
+    }
+    static sendMessage(msg: BridgeMessage) {
+        WebBridge.instance._sendMessage(msg);
     }
 
     private bridge: any;
@@ -37,7 +40,7 @@ class WebBridge {
         this.webkit = window.webkit?.messageHandlers;
     }
 
-    sendMessage(msg: BridgeMessage) {
+    _sendMessage(msg: BridgeMessage) {
         const messageHook = 'message_hook_' + new Date().getTime();
         const payload: Payload = {
             messageHook,

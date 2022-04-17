@@ -11,12 +11,14 @@ var WebBridge = /** @class */ (function () {
     }
     WebBridge.connect = function (name, option) {
         if (option === void 0) { option = {}; }
-        var bridge = window[name] || {};
-        if (bridge.sendMessage)
-            return;
-        window[name] = new WebBridge(name, option);
+        if (!WebBridge.instance) {
+            WebBridge.instance = window[name] = new WebBridge(name, option);
+        }
     };
-    WebBridge.prototype.sendMessage = function (msg) {
+    WebBridge.sendMessage = function (msg) {
+        WebBridge.instance._sendMessage(msg);
+    };
+    WebBridge.prototype._sendMessage = function (msg) {
         var _this = this;
         var messageHook = 'message_hook_' + new Date().getTime();
         var payload = {
