@@ -76,7 +76,7 @@ const getToken = document.getElementById('getToken');
 const list = document.getElementById('list');
 
 setToken.addEventListener('click', _=> {
-    webApp.sendMessage({
+    WebBridge.sendMessage({
         command: 'setToken',
         payload: {tokenId: 't112233'},
         subscribe: function(result) {
@@ -87,7 +87,7 @@ setToken.addEventListener('click', _=> {
 });
 
 getToken.addEventListener('click', _=> {
-    webApp.sendMessage({
+    WebBridge.sendMessage({
         command: 'getToken',
         subscribe: function(result) {
             console.log('getToken', result);
