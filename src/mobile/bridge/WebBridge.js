@@ -18,7 +18,6 @@ var WebBridge = /** @class */ (function () {
     };
     WebBridge.prototype.sendMessage = function (msg) {
         var _this = this;
-        var _a = this, webkit = _a.webkit, bridge = _a.bridge;
         var messageHook = 'message_hook_' + new Date().getTime();
         var payload = {
             messageHook: messageHook,
@@ -29,8 +28,29 @@ var WebBridge = /** @class */ (function () {
             msg.subscribe && msg.subscribe(result);
             requestAnimationFrame(function (_) { delete _this[messageHook]; });
         };
-        if (bridge) {
-            bridge[msg.command] && bridge[msg.command](JSON.stringify(payload));
+        this._sendNative(msg.command, payload);
+    };
+    WebBridge.prototype._sendNative = function (command, payload) {
+        var _a = this, webkit = _a.webkit, bridge = _a.bridge;
+        var jsonData = JSON.stringify(payload);
+        var _sendBridge = function (method) {
+            method && method(jsonData);
+        };
+        var _sendWebkit = function (handle) {
+            handle && handle.postMessage(jsonData);
+        };
+        var _sendSchema = function () {
+            window['location'] = command + '://?' + [
+                'data=' + payload.data,
+                'messageHook=' + payload.messageHook
+            ].join('&');
+        };
+        if (bridge)
+            _sendBridge(bridge[command]);
+        else if (webkit)
+            _sendWebkit(webkit[command]);
+        else {
+            _sendSchema();
         }
     };
     return WebBridge;

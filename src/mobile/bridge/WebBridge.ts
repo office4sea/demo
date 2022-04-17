@@ -38,7 +38,6 @@ class WebBridge {
     }
 
     sendMessage(msg: BridgeMessage) {
-        const {webkit, bridge} = this;
         const messageHook = 'message_hook_' + new Date().getTime();
         const payload: Payload = {
             messageHook,
@@ -49,9 +48,29 @@ class WebBridge {
             msg.subscribe && msg.subscribe(result);
             requestAnimationFrame(_=> {delete (this as any)[messageHook]});
         };
+        this._sendNative(msg.command, payload);
+    }
 
-        if(bridge) {
-            bridge[msg.command] && bridge[msg.command](JSON.stringify(payload));
+    _sendNative(command: string, payload: Payload) {
+        const {webkit, bridge} = this;
+        const jsonData = JSON.stringify(payload);
+        const _sendBridge = (method?: Function)=> {
+            method && method(jsonData);
+        };
+        const _sendWebkit = (handle?: {postMessage: Function})=> {
+            handle && handle.postMessage(jsonData);
+        };
+        const _sendSchema = ()=> {
+            (window as any)['location'] = command + '://?' + [
+                'data=' + payload.data,
+                'messageHook=' + payload.messageHook
+            ].join('&');
+        };
+
+        if(bridge) _sendBridge(bridge[command])
+        else if(webkit) _sendWebkit(webkit[command]);
+        else {
+            _sendSchema();
         }
     }
 }
