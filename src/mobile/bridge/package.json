@@ -4,7 +4,7 @@
   "description": "",
   "main": "WebBridge.js",
   "scripts": {
-    "start": "tsc",
+    "start": "tsc -w",
     "test": "tsc -w"
   },
   "keywords": [],

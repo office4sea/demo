@@ -4,32 +4,43 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>안드로이드 테스트</title>
+    <title>IOS 테스트</title>
     <script src="WebBridge.js?1"></script>
     <script>
-        var testValue = {};
-        window.webApp = {
-            setToken(arg) {
-                const obj = JSON.parse(arg);
-                const data = obj.data;
-                const messageHook = obj.messageHook;
-                testValue.token = data.tokenId
+(function() {
+    var testValue = {};
+    var setToken = {
+        postMessage: function(arg) {
+            const obj = JSON.parse(arg);
+            const data = obj.data;
+            const messageHook = obj.messageHook;
+            testValue.token = data.tokenId
 
-                const result = {a:1};
-                console.log(data, result);
-                webApp[messageHook](result);
-            },
-            getToken(arg) {
-                const obj = JSON.parse(arg);
-                const data = obj.data;
-                const messageHook = obj.messageHook;
+            const result = {a:1};
+            console.log(data, result);
+            webApp[messageHook](result);
+        }
+    };
+    var getToken = {
+        postMessage: function(arg) {
+            const obj = JSON.parse(arg);
+            const data = obj.data;
+            const messageHook = obj.messageHook;
 
-                const result = {
-                    tokenId: testValue.token
-                };
-                webApp[messageHook](result);
-            }
-        };
+            const result = {
+                tokenId: testValue.token
+            };
+            webApp[messageHook](result);
+        }
+    };
+
+    window.webkit = {
+        messageHandlers: {
+            setToken: setToken,
+            getToken: getToken
+        }
+    };
+})();
     </script>
     <style>
     html, body {margin:0; padding:0;}
