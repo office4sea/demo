@@ -16,7 +16,6 @@ interface BridgeMessage {
     payload?: unknown;
     subscribe?: (result?: unknown)=>void
 }
-
 type PromiseFunction = (arg?: unknown) => void;
 
 class WebBridge {
@@ -45,7 +44,7 @@ class WebBridge {
         const payload: Payload = {
             messageHook,
             data: msg.payload || {}
-        };;
+        };
 
         (this as any)[messageHook] = (result: any)=> {
             msg.subscribe && msg.subscribe(result);
@@ -57,23 +56,16 @@ class WebBridge {
     _sendNative(command: string, payload: Payload) {
         const {webkit, bridge} = this;
         const jsonData = JSON.stringify(payload);
-        const _sendBridge = (method?: Function)=> {
-            method && method(jsonData);
-        };
-        const _sendWebkit = (handle?: {postMessage: Function})=> {
-            handle && handle.postMessage(jsonData);
-        };
-        const _sendSchema = ()=> {
+
+        if(bridge) {
+            bridge[command] && bridge[command](jsonData);
+        } else if(webkit) {
+            webkit[command] && webkit[command].postMessage(jsonData);
+        } else {
             (window as any)['location'] = command + '://?' + [
                 'data=' + payload.data,
                 'messageHook=' + payload.messageHook
             ].join('&');
-        };
-
-        if(bridge) _sendBridge(bridge[command])
-        else if(webkit) _sendWebkit(webkit[command]);
-        else {
-            _sendSchema();
         }
     }
 }

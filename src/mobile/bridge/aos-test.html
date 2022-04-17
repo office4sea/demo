@@ -7,29 +7,29 @@
     <title>안드로이드 테스트</title>
     <script src="WebBridge.js?1"></script>
     <script>
-        var testValue = {};
-        window.webApp = {
-            setToken(arg) {
-                const obj = JSON.parse(arg);
-                const data = obj.data;
-                const messageHook = obj.messageHook;
-                testValue.token = data.tokenId
+        // var testValue = {};
+        // window.webApp = {
+        //     setToken(arg) {
+        //         const obj = JSON.parse(arg);
+        //         const data = obj.data;
+        //         const messageHook = obj.messageHook;
+        //         testValue.token = data.tokenId
 
-                const result = {a:1};
-                console.log(data, result);
-                webApp[messageHook](result);
-            },
-            getToken(arg) {
-                const obj = JSON.parse(arg);
-                const data = obj.data;
-                const messageHook = obj.messageHook;
+        //         const result = {a:1};
+        //         console.log(data, result);
+        //         webApp[messageHook](result);
+        //     },
+        //     getToken(arg) {
+        //         const obj = JSON.parse(arg);
+        //         const data = obj.data;
+        //         const messageHook = obj.messageHook;
 
-                const result = {
-                    tokenId: testValue.token
-                };
-                webApp[messageHook](result);
-            }
-        };
+        //         const result = {
+        //             tokenId: testValue.token
+        //         };
+        //         webApp[messageHook](result);
+        //     }
+        // };
     </script>
     <style>
     html, body {margin:0; padding:0;}

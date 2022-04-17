@@ -25,7 +25,6 @@ var WebBridge = /** @class */ (function () {
             messageHook: messageHook,
             data: msg.payload || {}
         };
-        ;
         this[messageHook] = function (result) {
             msg.subscribe && msg.subscribe(result);
             requestAnimationFrame(function (_) { delete _this[messageHook]; });
@@ -35,24 +34,17 @@ var WebBridge = /** @class */ (function () {
     WebBridge.prototype._sendNative = function (command, payload) {
         var _a = this, webkit = _a.webkit, bridge = _a.bridge;
         var jsonData = JSON.stringify(payload);
-        var _sendBridge = function (method) {
-            method && method(jsonData);
-        };
-        var _sendWebkit = function (handle) {
-            handle && handle.postMessage(jsonData);
-        };
-        var _sendSchema = function () {
+        if (bridge) {
+            bridge[command] && bridge[command](jsonData);
+        }
+        else if (webkit) {
+            webkit[command] && webkit[command].postMessage(jsonData);
+        }
+        else {
             window['location'] = command + '://?' + [
                 'data=' + payload.data,
                 'messageHook=' + payload.messageHook
             ].join('&');
-        };
-        if (bridge)
-            _sendBridge(bridge[command]);
-        else if (webkit)
-            _sendWebkit(webkit[command]);
-        else {
-            _sendSchema();
         }
     };
     return WebBridge;
