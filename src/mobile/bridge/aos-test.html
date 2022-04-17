@@ -5,26 +5,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>안드로이드 테스트</title>
-    <script src="WebBridge.js"></script>
+    <script src="WebBridge.js?1"></script>
     <script>
-        // var testValue = {};
-        // window.webApp = {
-        //     setToken(arg) {
-        //         const data = JSON.parse(arg);
-        //         testValue.token = data.id
+        var testValue = {};
+        window.webApp = {
+            setToken(arg) {
+                const obj = JSON.parse(arg);
+                const data = obj.data;
+                const message_hook = obj.message_hook;
+                testValue.token = data.tokenId
 
-        //         const result = JSON.stringify({});
-        //         __bridge__.messageHook(data.messageHook, result);
-        //     },
-        //     getToken(arg) {
-        //         const data = JSON.parse(arg);
+                const result = {a:1};
+                console.log(data, result);
+                webApp[message_hook](result);
+            },
+            getToken(arg) {
+                const obj = JSON.parse(arg);
+                const data = obj.data;
+                const message_hook = obj.message_hook;
 
-        //         const result = JSON.stringify({
-        //             id: testValue.token
-        //         });
-        //         __bridge__.messageHook(data.messageHook, result);
-        //     }
-        // };
+                const result = {
+                    tokenId: testValue.token
+                };
+                webApp[message_hook](result);
+            }
+        };
     </script>
     <style>
     html, body {margin:0; padding:0;}
@@ -48,7 +53,13 @@
     <ul id="list"></ul>
 
 <script>
-const webApp = WebBridge.get('webApp');
+WebBridge.connect('webApp', {
+    reCall() {
+        console.log('--recole--');
+    }
+});
+
+
 const setToken = document.getElementById('setToken');
 const getToken = document.getElementById('getToken');
 const list = document.getElementById('list');
@@ -56,10 +67,11 @@ const list = document.getElementById('list');
 setToken.addEventListener('click', _=> {
     webApp.sendMessage({
         command: 'setToken',
-        payload: {id: 't112233'},
+        payload: {tokenId: 't112233'},
         subscribe: function(result) {
-            addList(JSON.stringify(result));
-        },
+            console.log('setToken', result);
+            addList('setToken: ' + JSON.stringify(result))
+        }
     });
 });
 
@@ -67,8 +79,9 @@ getToken.addEventListener('click', _=> {
     webApp.sendMessage({
         command: 'getToken',
         subscribe: function(result) {
-            addList(JSON.stringify(result));
-        },
+            console.log('getToken', result);
+            addList('getToken: ' + JSON.stringify(result))
+        }
     });
 });
 

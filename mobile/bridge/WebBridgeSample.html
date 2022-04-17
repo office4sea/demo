@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="WebBridge.js"></script>
+</head>
+<body>
+    <div class="buttons">
+        <button id="setToken">브릿지 호출(set token)</button>
+        <button id="getToken">브릿지 호출(get token)</button>
+        <hr/>
+        <button id="reBridge">역브릿지 호출</button>
+        <hr/>
+    </div>
+
+    <ul id="list"></ul>
+<script>
+var setToken = document.getElementById('setToken');
+var getToken = document.getElementById('getToken');
+var list = document.getElementById('list');
+
+WebBridge.connect('webApp', {
+    reCall() {
+        console.log('--recole--');
+    }
+});
+
+setToken.addEventListener('click', function() {
+    webApp.sendMessage({
+        command: 'setToken',
+        payload: {tokenId: 't112233'},
+        subscribe: function(result) {
+            console.log('setToken', result);
+            addList('setToken: ' + JSON.stringify(result))
+        }
+    });
+});
+getToken.addEventListener('click', function() {
+    webApp.sendMessage({
+        command: 'getToken',
+        subscribe: function(result) {
+            console.log('getToken', result);
+            addList('getToken: ' + JSON.stringify(result))
+        }
+    });
+});
+function addList(text) {
+    var li = list.appendChild(document.createElement('li'));
+    li.textContent = text;
+}
+
+</script>
+</body>
+</html>
