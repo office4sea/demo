@@ -25,6 +25,7 @@ var list = document.getElementById('list');
 WebBridge.connect('webApp', {
     reCall() {
         console.log('--recole--');
+        addList('--recole--');
     }
 });
 
@@ -34,7 +35,7 @@ setToken.addEventListener('click', function() {
         payload: {tokenId: 't112233'},
         subscribe: function(result) {
             console.log('setToken', result);
-            addList('setToken: ' + JSON.stringify(result))
+            addList('setToken: ' + JSON.stringify(result));
         }
     });
 });
@@ -43,7 +44,7 @@ getToken.addEventListener('click', function() {
         command: 'getToken',
         subscribe: function(result) {
             console.log('getToken', result);
-            addList('getToken: ' + JSON.stringify(result))
+            addList('getToken: ' + JSON.stringify(result));
         }
     });
 });
