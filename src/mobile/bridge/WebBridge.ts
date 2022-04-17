@@ -9,7 +9,7 @@ interface Option {
 }
 interface Payload {
     data: unknown;
-    message_hook: string;
+    messageHook: string;
 }
 interface BridgeMessage {
     command: string;
@@ -39,15 +39,15 @@ class WebBridge {
 
     sendMessage(msg: BridgeMessage) {
         const {webkit, bridge} = this;
-        const message_hook = 'message_hook_' + new Date().getTime();
+        const messageHook = 'message_hook_' + new Date().getTime();
         const payload: Payload = {
-            message_hook,
+            messageHook,
             data: msg.payload || {}
         };;
 
-        (this as any)[message_hook] = (result: any)=> {
+        (this as any)[messageHook] = (result: any)=> {
             msg.subscribe && msg.subscribe(result);
-            requestAnimationFrame(_=> {delete (this as any)[message_hook]});
+            requestAnimationFrame(_=> {delete (this as any)[messageHook]});
         };
 
         if(bridge) {

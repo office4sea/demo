@@ -19,15 +19,15 @@ var WebBridge = /** @class */ (function () {
     WebBridge.prototype.sendMessage = function (msg) {
         var _this = this;
         var _a = this, webkit = _a.webkit, bridge = _a.bridge;
-        var message_hook = 'message_hook_' + new Date().getTime();
+        var messageHook = 'message_hook_' + new Date().getTime();
         var payload = {
-            message_hook: message_hook,
+            messageHook: messageHook,
             data: msg.payload || {}
         };
         ;
-        this[message_hook] = function (result) {
+        this[messageHook] = function (result) {
             msg.subscribe && msg.subscribe(result);
-            requestAnimationFrame(function (_) { delete _this[message_hook]; });
+            requestAnimationFrame(function (_) { delete _this[messageHook]; });
         };
         if (bridge) {
             bridge[msg.command] && bridge[msg.command](JSON.stringify(payload));
