@@ -16,15 +16,17 @@ interface BridgeMessage {
     payload?: unknown;
     subscribe?: (result?: unknown)=>void
 }
-
 type PromiseFunction = (arg?: unknown) => void;
 
 class WebBridge {
+    private static instance: WebBridge;
     static connect(name: string, option: Option = {}) {
-        const bridge: any = window[name] || {};
-        if(bridge.sendMessage) return;
-
-        (window as any)[name] = new WebBridge(name, option);
+        if(!WebBridge.instance) {
+            WebBridge.instance = (window as any)[name] = new WebBridge(name, option);
+        }
+    }
+    static sendMessage(msg: BridgeMessage) {
+        WebBridge.instance._sendMessage(msg);
     }
 
     private bridge: any;
@@ -37,21 +39,33 @@ class WebBridge {
         this.webkit = window.webkit?.messageHandlers;
     }
 
-    sendMessage(msg: BridgeMessage) {
-        const {webkit, bridge} = this;
+    _sendMessage(msg: BridgeMessage) {
         const messageHook = 'message_hook_' + new Date().getTime();
         const payload: Payload = {
             messageHook,
             data: msg.payload || {}
-        };;
+        };
 
         (this as any)[messageHook] = (result: any)=> {
             msg.subscribe && msg.subscribe(result);
             requestAnimationFrame(_=> {delete (this as any)[messageHook]});
         };
+        this._sendNative(msg.command, payload);
+    }
+
+    _sendNative(command: string, payload: Payload) {
+        const {webkit, bridge} = this;
+        const jsonData = JSON.stringify(payload);
 
         if(bridge) {
-            bridge[msg.command] && bridge[msg.command](JSON.stringify(payload));
+            bridge[command] && bridge[command](jsonData);
+        } else if(webkit) {
+            webkit[command] && webkit[command].postMessage(jsonData);
+        } else {
+            (window as any)['location'] = command + '://?' + [
+                'data=' + payload.data,
+                'messageHook=' + payload.messageHook
+            ].join('&');
         }
     }
 }
