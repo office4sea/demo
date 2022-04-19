@@ -14,6 +14,9 @@
         <hr/>
         <button id="reBridge">역브릿지 호출</button>
         <hr/>
+        <hr/>
+        <button id="showKey">키보드 호출</button>
+        <hr/>        
     </div>
 
     <ul id="list"></ul>
@@ -47,6 +50,20 @@ getToken.addEventListener('click', function() {
         }
     });
 });
+
+showKey.addEventListener('click', function() {
+    webApp.sendMessage({
+        command: 'setCommonData2',
+        payload: {actKey: 'ShowKeyPad',
+                  actValue: '1' 
+                 },
+        subscribe: function(result) {
+            console.log('result', result);
+            addList('result: ' + JSON.stringify(result))
+        }
+    });
+});
+
 function addList(text) {
     var li = list.appendChild(document.createElement('li'));
     li.textContent = text;
