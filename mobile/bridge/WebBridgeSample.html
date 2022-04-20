@@ -14,16 +14,29 @@
         <hr/>
         <button id="reBridge">역브릿지 호출</button>
         <hr/>
-        <button id="showKey">키보드 호출</button>
+        <button id="showKeypad">Kp_S</button>
+        <button id="closeKeypad">Kp_C</button>
+        <button id="openCamera">Cm_O</button>
+        <button id="getMobileInfo">info</button>
+        <button id="openBrowser">Brw</button>
+        <button id="openWebPage">WebP</button>
+        <button id="test">test</button>
         <hr/>
-                
+
     </div>
 
     <ul id="list"></ul>
 <script>
 var setToken = document.getElementById('setToken');
 var getToken = document.getElementById('getToken');
-var showKey = document.getElementById('getToken');
+var showKeypad = document.getElementById('showKeypad');
+var closeKeypad = document.getElementById('closeKeypad');
+var openCamera = document.getElementById('openCamera');
+var getMobileInfo = document.getElementById('getMobileInfo');
+var openBrowser = document.getElementById('openBrowser');
+var openWebPage = document.getElementById('openWebPage');
+var test = document.getElementById('test');
+
 var list = document.getElementById('list');
 
 WebBridge.connect('webApp', {
@@ -54,9 +67,9 @@ getToken.addEventListener('click', function() {
 });
 
 
-showKey.addEventListener('click', function() {
-    webApp.sendMessage({
-        command: 'setCommonData2',
+showKeypad.addEventListener('click', function() {
+    WebBridge.sendMessage({
+        command: 'setCommonDataEx',
         payload: {actKey: 'ShowKeyPad',
                   actValue: '1' 
                  },
@@ -66,6 +79,91 @@ showKey.addEventListener('click', function() {
         }
     });
 });
+
+closeKeypad.addEventListener('click', function() {
+    WebBridge.sendMessage({
+        command: 'setCommonDataEx',
+        payload: {actKey: 'ShowKeyPad',
+                  actValue: '0' 
+                 },
+        subscribe: function(result) {
+            console.log('result', result);
+            addList('result: ' + JSON.stringify(result))
+        }
+    });
+});
+
+openCamera.addEventListener('click', function() {
+    WebBridge.sendMessage({
+        command: 'setCommonDataEx',
+        payload: {actKey: 'OpenCamera',
+                  actValue: '1' 
+                 },
+        subscribe: function(result) {
+            console.log('result', result);
+            addList('result: ' + JSON.stringify(result))
+        }
+    });
+});
+
+getMobileInfo.addEventListener('click', function() {
+    WebBridge.sendMessage({
+        command: 'setCommonDataEx',
+        payload: {actKey: 'GetMobileInfo',
+                  actValue: '0' 
+                 },
+        subscribe: function(result) {
+            console.log('result', result);
+            addList('result: ' + JSON.stringify(result))
+        }
+    });
+});
+
+// 1은 전체파일
+// 2은 이미지동영상
+// 3는 기타문서
+openBrowser.addEventListener('click', function() {
+    WebBridge.sendMessage({
+        command: 'setCommonDataEx',
+        payload: {actKey: 'OpenBrowser',
+                  actValue: '1' 
+                 },
+        subscribe: function(result) {
+            console.log('result', result);
+            addList('result: ' + JSON.stringify(result))
+        }
+    });
+});
+
+openWebPage.addEventListener('click', function() {
+    WebBridge.sendMessage({
+        command: 'setCommonDataEx',
+        payload: {actKey: 'OpenWebPage',
+                  actValue: 'http://www.wooriworld.com/0.demo/mobile/bridge/sample.html' 
+                 },
+        subscribe: function(result) {
+            console.log('result', result);
+            addList('result: ' + JSON.stringify(result))
+        }
+    });
+});
+
+test.addEventListener('click', function() {
+
+    window.webApp.setCommonData('OpenCamera','1');
+
+    // WebBridge.sendMessage({
+    //     command: 'setCommonDataEx',
+    //     payload: {actKey: 'OpenWebPage',
+    //               actValue: 'http://www.wooriworld.com/0.demo/mobile/bridge/sample.html' 
+    //              },
+    //     subscribe: function(result) {
+    //         console.log('result', result);
+    //         addList('result: ' + JSON.stringify(result))
+    //     }
+    // });
+});
+
 
 function addList(text) {
     var li = list.appendChild(document.createElement('li'));
