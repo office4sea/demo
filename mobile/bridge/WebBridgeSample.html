@@ -41,9 +41,13 @@ var test = document.getElementById('test');
 var list = document.getElementById('list');
 
 WebBridge.connect('webApp', {
-    reCall() {
-        console.log('--recole--');
-        addList('--recole--');
+    reCall(result) {
+        console.log('reCall', result);
+        addList('reCall:'+ JSON.stringify(result));
+    },
+    jsAct(result) {
+        console.log('jsAct', result);
+        addList('jsAct:'+ JSON.stringify(result));
     }
 });
 
