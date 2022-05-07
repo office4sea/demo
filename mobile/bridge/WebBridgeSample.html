@@ -14,7 +14,6 @@
         <hr/>
         <button id="reBridge">역브릿지 호출</button>
         <hr/>
-<<<<<<< HEAD
         <button id="showKeypad">Kp_S</button>
         <button id="closeKeypad">Kp_C</button>
         <button id="openCamera">Cm_O</button>
@@ -24,11 +23,10 @@
         <button id="test">test</button>
         <hr/>
 
-=======
->>>>>>> 7f934fd5dc84cc398452ad7c63cfce02df8bb675
     </div>
 
     <ul id="list"></ul>
+    
 <script>
 var setToken = document.getElementById('setToken');
 var getToken = document.getElementById('getToken');
@@ -43,9 +41,13 @@ var test = document.getElementById('test');
 var list = document.getElementById('list');
 
 WebBridge.connect('webApp', {
-    reCall() {
-        console.log('--recole--');
-        addList('--recole--');
+    reCall(result) {
+        console.log('reCall', result);
+        addList('reCall:'+ JSON.stringify(result));
+    },
+    jsAct(result) {
+        console.log('jsAct', result);
+        addList('jsAct:'+ JSON.stringify(result));
     }
 });
 
@@ -68,7 +70,6 @@ getToken.addEventListener('click', function() {
         }
     });
 });
-<<<<<<< HEAD
 
 
 showKeypad.addEventListener('click', function() {
@@ -169,8 +170,6 @@ test.addEventListener('click', function() {
 });
 
 
-=======
->>>>>>> 7f934fd5dc84cc398452ad7c63cfce02df8bb675
 function addList(text) {
     var li = list.appendChild(document.createElement('li'));
     li.textContent = text;
