@@ -13,6 +13,7 @@
         <button id="getToken">브릿지 호출(get token)</button>
         <hr/>
         <button id="reBridge">역브릿지 호출</button>
+        <input type="file" name="files"  id="files"  accept="image/*;capture=camera"/>
         <hr/>
         <button id="showKeypad">Kp_S</button>
         <button id="closeKeypad">Kp_C</button>
@@ -20,7 +21,7 @@
         <button id="getMobileInfo">info</button>
         <button id="openBrowser">Brw</button>
         <button id="openWebPage">WebP</button>
-        <button id="test">test</button>
+        <button id="getKeypadStates">States</button>
         <hr/>
 
     </div>
@@ -36,7 +37,7 @@ var openCamera = document.getElementById('openCamera');
 var getMobileInfo = document.getElementById('getMobileInfo');
 var openBrowser = document.getElementById('openBrowser');
 var openWebPage = document.getElementById('openWebPage');
-var test = document.getElementById('test');
+var getKeypadStates = document.getElementById('getKeypadStates');
 
 var list = document.getElementById('list');
 
@@ -153,20 +154,18 @@ openWebPage.addEventListener('click', function() {
     });
 });
 
-test.addEventListener('click', function() {
+getKeypadStates.addEventListener('click', function() {
 
-    window.webApp.setCommonData('OpenCamera','1');
-
-    // WebBridge.sendMessage({
-    //     command: 'setCommonDataEx',
-    //     payload: {actKey: 'OpenWebPage',
-    //               actValue: 'http://www.wooriworld.com/0.demo/mobile/bridge/sample.html' 
-    //              },
-    //     subscribe: function(result) {
-    //         console.log('result', result);
-    //         addList('result: ' + JSON.stringify(result))
-    //     }
-    // });
+    WebBridge.sendMessage({
+         command: 'setCommonDataEx',
+         payload: {actKey: 'GetKeypadStates',
+                   actValue: '1' 
+                  },
+        subscribe: function(result) {
+            console.log('result', result);
+            addList('result: ' + JSON.stringify(result))
+        }
+    });
 });
 
 
