@@ -4,23 +4,81 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>카메라 실행</title>
+    <title>RTC카메라</title>
     <style>
-    body {
-        margin: 0;
+    #camera-cover {
+        width: 100%;
+        height: 50vw;
+        border: solid 1px #000;
         padding: 0;
     }
     </style>
 </head>
 <body>
     <div>
-        <h2>web cam sample</h2>
-        <button id="camOpen">카메라 실행</button>
-        <button id="camCapture">화면 캡쳐</button>
+        <h2>RTC카메라</h2>
+        <button>카메라 내장형</button>
+        <button>카메라 팝업형</button>
+        <button>화면 캡쳐</button>
     </div>
     <hr/>
-    <textarea id="camData" rows="10" style="width: 100%;"></textarea>
-    <div id="camView"></div>
-    <script src="main.js"></script>
+    <div id="layer" style="display: none;">
+        <div id="camera-cover"></div>
+    </div>
+    <textarea id="camera-data" style="width:100%; height:50vw;"></textarea>
+
+    <script src="rtc-camera.js"></script>
+    <script>
+        const printData = (capture, format)=> {
+            if(!capture) return;
+
+            const cameraData = document.querySelector('#camera-data');
+            cameraData.value = capture.getData(format);
+            cameraData.style.backgroundImage = `url(${cameraData.value})`;
+        };
+
+        // 카메라 디스플레이 설정
+        // guide: 카메라 가이드 노출 여부
+        //      size: 가이드라인 사이즈
+        // shutter: 셔터 버튼 노출 여부
+        //      onCapture: 셔터 버튼 이벤트시 수행될 리스너 등록
+        rtcCamera.bindDisplay('#camera-cover', {
+            guide: {
+                size: '80%'
+            },
+            shutter: {
+                onCapture(capture) {
+                    printData(capture);
+                    if(layer.isPopup) {
+                        layer.isPopup = false;
+                        layer.style.cssText = 'display:none;';
+                    }
+                }
+            }
+        });
+
+        const playCamera = async procedure=> {
+            try {
+                await rtcCamera.play();
+                procedure && procedure();
+            } catch(error) {
+                alert(error);
+            }
+        }
+        const layer = document.querySelector('#layer');
+        const [embedd, popup, capture] = document.querySelectorAll('button');
+        // 카메라 내장형
+        embedd.addEventListener('click', _=> playCamera(_=> {
+            layer.isPopup = false;
+            layer.style.cssText = 'display:block;';
+        }));
+        // 카메라 팝업형
+        popup.addEventListener('click', _=> playCamera(_=> {
+            layer.isPopup = true;
+            layer.style.cssText = 'display:block; position:absolute; left:0; top:0; width:100vw; height:100vh; background:#fff;';
+        }));
+        // 화면 캡쳐
+        capture.addEventListener('click', _=> printData(rtcCamera.capture(), 'image/jpeg'));
+    </script>
 </body>
 </html>

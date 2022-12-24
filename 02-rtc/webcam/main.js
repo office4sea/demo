@@ -39,9 +39,12 @@ class RtcCamera {
     }
     _initCamera() {
         const {mediaDevices} = navigator;
-        mediaDevices.getUserMedia({video:{
-            facingMode: {exact: 'environment'}
-        }})
+        // mediaDevices.getUserMedia({video:{
+        //     facingMode: {
+        //         exact: 'use '//'environment'
+        //     }
+        // }})
+        mediaDevices.getUserMedia({video:true})
             .then(srcObject=> Object.assign(this._camera, {srcObject}));
     }
     _createCamera() {
