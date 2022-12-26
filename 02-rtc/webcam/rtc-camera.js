@@ -30,11 +30,11 @@ const rtcCamera = {
             .getUserMedia({
                 video: {
                     facingMode: {exact: 'environment'}, //'environment'
-                    width: width,
-                    height: height
+                    // width: width,
+                    // height: height
 
-                    // width: {ideal:1920},
-                    // height:{ideal:1440}
+                    width: {ideal:1920},
+                    height:{ideal:1440}
                 }
             })
             .then(srcObject=> Object.assign(_camera, {srcObject}).showUi().play())
