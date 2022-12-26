@@ -27,19 +27,11 @@ const rtcCamera = {
         const {_camera} = this;
         if(!_camera) return Promise.reject('카메라 디스플레이가 초기화 되지 않았습니다.');
 
-        const {offsetWidth:width, offsetHeight:height} = _camera;
-        // _camera.width = 1280;
-        // _camera.height = 720;
-        _camera.style.cssText = `width:${width*2}px; height:${height*2}px;`;
         return navigator.mediaDevices
             .getUserMedia({
                 audio: false,
                 video: {
                     facingMode: /android/i.test(navigator.userAgent) ? {exact: 'environment'} : undefined, //'environment'
-                    // aspectRatio: 16/9,
-                    // aspectRatio: 9/16,
-                    // width: {ideal:width},
-                    // height: {ideal:height},
                     frameRate: {ideal:5}
 
                     // width: {ideal:1920},
@@ -89,12 +81,13 @@ const rtcCamera = {
             background: '#000',
             width: '100%',
             height: '100%',
+            overflow: 'hidden',
             justifyContent: 'center',
             alignItems: 'center'
         }));
         const camera = fram.appendChild(this._makeEl('video', {
-            width: '100%',
-            height: '100%'
+            width: '100vh',
+            height: '100vw'
         }));
 
         const uiList = [];
