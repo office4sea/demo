@@ -15,6 +15,8 @@ const rtcCamera = {
      * @param {*} _option 
      */
     bindDisplay(selector, _option={}) {
+        const cameraData = document.getElementById('camera-data');
+        cameraData.value = _option.version;
         const _camera = this._getCameraDisplay(selector, _option);
         Object.assign(this, {_camera, _option})
     },
