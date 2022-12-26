@@ -30,16 +30,16 @@ const rtcCamera = {
         const {offsetWidth:width, offsetHeight:height} = _camera;
         // _camera.width = 1280;
         // _camera.height = 720;
-        _camera.style.cssText = `width:1280px; height:720px;`;
+        _camera.style.cssText = `width:${width}px; height:${height}px;`;
         return navigator.mediaDevices
             .getUserMedia({
                 audio: false,
                 video: {
-                    // facingMode: {exact: 'environment'}, //'environment'
-                    aspectRatio: 16/9,
+                    facingMode: {exact: 'environment'}, //'environment'
+                    // aspectRatio: 16/9,
                     // aspectRatio: 9/16,
-                    width: {ideal:width},
-                    height: {ideal:height},
+                    // width: {ideal:width},
+                    // height: {ideal:height},
                     frameRate: {ideal:5}
 
                     // width: {ideal:1920},
