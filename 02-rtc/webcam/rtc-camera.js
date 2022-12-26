@@ -31,7 +31,8 @@ const rtcCamera = {
                 video: {
                     facingMode: {exact: 'environment'}, //'environment'
                     width: {ideal:width},
-                    height: {ideal:height}
+                    height: {ideal:height},
+                    frameRate: {ideal:10, max:15}
 
                     // width: {ideal:1920},
                     // height:{ideal:1440}
