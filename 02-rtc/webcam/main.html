@@ -59,8 +59,8 @@
 
         const playCamera = async procedure=> {
             try {
-                await rtcCamera.play();
                 procedure && procedure();
+                await rtcCamera.play();
             } catch(error) {
                 alert(error);
             }

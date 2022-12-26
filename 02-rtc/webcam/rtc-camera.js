@@ -25,12 +25,16 @@ const rtcCamera = {
         const {_camera} = this;
         if(!_camera) return Promise.reject('카메라 디스플레이가 초기화 되지 않았습니다.');
 
+        const {offsetWidth:width, offsetHeight:height} = _camera;
         return navigator.mediaDevices
             .getUserMedia({
                 video: {
-                    facingMode: {exact: 'environment'},//'environment'
-                    width: {ideal:1920},
-                    height:{ideal:1440}
+                    facingMode: {exact: 'environment'}, //'environment'
+                    width: width*1000,
+                    height: height*1000
+
+                    // width: {ideal:1920},
+                    // height:{ideal:1440}
                 }
             })
             .then(srcObject=> Object.assign(_camera, {srcObject}).showUi().play())
