@@ -29,9 +29,9 @@ const rtcCamera = {
         return navigator.mediaDevices
             .getUserMedia({
                 video: {
-                    facingMode: {exact: 'environment'}, //'environment'
-                    width: width,
-                    height: height
+                    // facingMode: {exact: 'environment'}, //'environment'
+                    width: {ideal:340*2},
+                    height: {ideal:182*2}
 
                     // width: {ideal:1920},
                     // height:{ideal:1440}
