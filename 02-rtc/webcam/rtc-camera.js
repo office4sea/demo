@@ -28,12 +28,15 @@ const rtcCamera = {
         if(!_camera) return Promise.reject('카메라 디스플레이가 초기화 되지 않았습니다.');
 
         const {offsetWidth:width, offsetHeight:height} = _camera;
+        _camera.width = 1280;
+        _camera.height = 720;
         return navigator.mediaDevices
             .getUserMedia({
+                audio: false,
                 video: {
                     facingMode: {exact: 'environment'}, //'environment'
-                    // aspectRatio: 16/9,
-                    aspectRatio: 9/16,
+                    aspectRatio: 16/9,
+                    // aspectRatio: 9/16,
                     width: {ideal:width},
                     height: {ideal:height},
                     frameRate: {ideal:5}
