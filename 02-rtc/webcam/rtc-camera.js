@@ -32,10 +32,10 @@ const rtcCamera = {
             .getUserMedia({
                 video: {
                     facingMode: {exact: 'environment'}, //'environment'
-                    aspectRatio: 16/9
+                    aspectRatio: 16/9,
                     // width: {ideal:width},
                     // height: {ideal:height},
-                    // frameRate: {ideal:10, max:15}
+                    frameRate: {ideal:5, max:15}
 
                     // width: {ideal:1920},
                     // height:{ideal:1440}
