@@ -30,7 +30,7 @@ const rtcCamera = {
         const {offsetWidth:width, offsetHeight:height} = _camera;
         // _camera.width = 1280;
         // _camera.height = 720;
-        _camera.style.cssText = `width:${width*2}px; height:${height}px;`;
+        _camera.style.cssText = `width:${width*2}px; height:${height*2}px;`;
         return navigator.mediaDevices
             .getUserMedia({
                 audio: false,
