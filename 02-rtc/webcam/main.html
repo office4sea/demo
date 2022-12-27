@@ -63,6 +63,11 @@
                 }
             }
         });
+        rtcCamera.getDevices()
+            .then(data=> {
+                const cameraData = document.querySelector('#camera-data');
+                cameraData.value = JSON.stringify(data, '', '  ');
+            });
 
         const playCamera = async procedure=> {
             try {

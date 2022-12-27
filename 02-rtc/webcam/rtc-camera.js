@@ -29,15 +29,14 @@ const rtcCamera = {
         if(!_camera) return Promise.reject('카메라 디스플레이가 초기화 되지 않았습니다.');
 
         const {isMobile} = _option;
-        const {offsetWidth:width, offsetHeight} = _camera
         return navigator.mediaDevices
             .getUserMedia({
                 audio: false,
                 video: {
                     facingMode: {exact: isMobile?'environment':'user'},
-                    // frameRate: {ideal:5}
+                    frameRate: {ideal:10},
                     width: {ideal:1920},
-                    height:{ideal:1440}
+                    height:{ideal:1440},
                 }
             })
             .then(srcObject=> {
@@ -77,6 +76,9 @@ const rtcCamera = {
     },
     stop() {
         this._removeCamera();
+    },
+    getDevices() {
+        return navigator.mediaDevices.enumerateDevices();
     },
 
     _getCameraDisplay(selector, option) {
