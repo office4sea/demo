@@ -7,8 +7,8 @@
     <title>RTC카메라</title>
     <style>
     #camera-cover {
-        width: 100%;
-        height: 50vw;
+        width: 200px;
+        height: 100px;
         border: solid 1px #000;
         padding: 0;
     }
@@ -21,16 +21,23 @@
         <button>카메라 팝업형</button>
         <button>화면 캡쳐</button>
     </div>
+
     <hr/>
-    <div id="layer" style="display: none;">
+    <div id="layer" style="display:flex; justify-content:center;">
         <div id="camera-cover"></div>
     </div>
+
+    <hr/>
+    <img id="camera-image" src="#">
     <textarea id="camera-data" style="width:100%; height:50vw;"></textarea>
 
     <script src="rtc-camera.js?14"></script>
     <script>
         const printData = (capture, format)=> {
             if(!capture) return;
+
+            const cameraImage = document.querySelector('#camera-image');
+            cameraImage.src = capture.getData(format);
 
             const cameraData = document.querySelector('#camera-data');
             cameraData.value = capture.getData(format);
@@ -43,16 +50,15 @@
         // shutter: 셔터 버튼 노출 여부
         //      onCapture: 셔터 버튼 이벤트시 수행될 리스너 등록
         rtcCamera.bindDisplay('#camera-cover', {
-            version:14,
-            guide: {
-                size: '80%'
-            },
+            // guide: {
+            //     size: '80%'
+            // },
             shutter: {
                 onCapture(capture) {
                     printData(capture);
                     if(layer.isPopup) {
                         layer.isPopup = false;
-                        layer.style.cssText = 'display:none;';
+                        // layer.style.cssText = 'display:none;';
                     }
                 }
             }
@@ -71,12 +77,12 @@
         // 카메라 내장형
         embedd.addEventListener('click', _=> playCamera(_=> {
             layer.isPopup = false;
-            layer.style.cssText = 'display:block;';
+            // layer.style.cssText = 'display:block;';
         }));
         // 카메라 팝업형
         popup.addEventListener('click', _=> playCamera(_=> {
             layer.isPopup = true;
-            layer.style.cssText = 'display:block; position:absolute; left:0; top:0; width:100vw; height:100vh; background:#fff;';
+            // layer.style.cssText = 'display:block; position:absolute; left:0; top:0; width:100vw; height:100vh; background:#fff;';
         }));
         // 화면 캡쳐
         capture.addEventListener('click', _=> printData(rtcCamera.capture(), 'image/jpeg'));

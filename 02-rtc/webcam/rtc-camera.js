@@ -12,33 +12,37 @@ const rtcCamera = {
     /**
      * 디스플레이 엘리먼트 바인딩
      * @param {string} selector 
-     * @param {*} _option 
+     * @param {*} option 
      */
-    bindDisplay(selector, _option={}) {
-        const cameraData = document.getElementById('camera-data');
-        cameraData.value = _option.version;
-        const _camera = this._getCameraDisplay(selector, _option);
+    bindDisplay(selector, option={}) {
+        const _camera = this._getCameraDisplay(selector, option);
+        const _option = Object.assign({
+            isMobile: /android|iPhone/i.test(navigator.userAgent)
+        }, option);
         Object.assign(this, {_camera, _option})
     },
     /**
      * 카메라를 실행합니다.
      */
     play() {
-        const {_camera} = this;
+        const {_camera, _option} = this;
         if(!_camera) return Promise.reject('카메라 디스플레이가 초기화 되지 않았습니다.');
 
+        const {isMobile} = _option;
         return navigator.mediaDevices
             .getUserMedia({
                 audio: false,
                 video: {
-                    facingMode: /android/i.test(navigator.userAgent) ? {exact: 'environment'} : undefined, //'environment'
-                    frameRate: {ideal:5}
-
+                    facingMode: {exact: isMobile?'environment':'user'},
+                    // frameRate: {ideal:5}
                     // width: {ideal:1920},
                     // height:{ideal:1440}
                 }
             })
-            .then(srcObject=> Object.assign(_camera, {srcObject}).showUi().play())
+            .then(srcObject=> {
+                _camera.reDrawDisplay();
+                Object.assign(_camera, {srcObject}).showUi().play()
+            })
             .catch(reason=> {
                 console.error(reason);
                 return Promise.reject('카메라 접근 권한이 처리되지 못했습니다.');
@@ -52,11 +56,14 @@ const rtcCamera = {
         if(!_camera.srcObject) return;
         _camera.pause();
 
-        const {offsetWidth:width, offsetHeight:height} = _camera;
+        // const {offsetWidth:width, offsetHeight:height} = _camera;
+        const {width, height} = _camera.getFrameRect();
         const canvas = Object.assign(document.createElement('canvas'), {width, height});
 
+        console.log(width, height, _camera.offsetWidth, _camera.offsetHeight);
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(_camera, 0, 0, width, height);
+        // ctx.drawImage(_camera, 0, 0, width, height);
+        ctx.drawImage(_camera, (width - _camera.offsetWidth)/2, (height - _camera.offsetHeight)/2, _camera.offsetWidth, _camera.offsetHeight);
 
         const getData = format=> canvas.toDataURL(format);
         const preview = selector=> {
@@ -85,13 +92,18 @@ const rtcCamera = {
             justifyContent: 'center',
             alignItems: 'center'
         }));
-        const camera = fram.appendChild(this._makeEl('video', {
-            width: '100vh',
-            height: '100vw'
-        }));
+        const camera = fram.appendChild(this._makeEl('video'));
 
         const uiList = [];
         camera.showUi = _=> (uiList.forEach(ui=> {ui.style.display = ''}), camera);
+        camera.getFrameRect = _=> {
+            const {offsetWidth:width, offsetHeight:height} = fram;
+            return {width, height};
+        };
+        camera.reDrawDisplay = _=> {
+            const {width, height} = camera.getFrameRect();
+            camera.height = width * 2;
+        };
 
         // 디스플레이 가이드
         const guide = this._getDisplayGuide(option);
@@ -166,7 +178,9 @@ const rtcCamera = {
         const el = document.createElement(tag);
         const toCebab = v=> v.replace(/^\w/, v=>v.toLowerCase()).replace(/[A-Z]/g, v=>`-${v.toLowerCase()}`);
 
-        el.style.cssText = Object.entries(style).map(([k, v])=>`${toCebab(k)}: ${v}`).join(';');
+        style && Object.assign(el.style, {
+            cssText: Object.entries(style).map(([k, v])=>`${toCebab(k)}: ${v}`).join(';')
+        });
         return el;
     }
 };
