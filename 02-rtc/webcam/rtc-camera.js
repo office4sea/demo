@@ -33,11 +33,12 @@ const rtcCamera = {
             .getUserMedia({
                 audio: false,
                 video: {
-                    facingMode: {exact: isMobile?'environment':'user'},
+                    facingMode: isMobile ? {exact:'environment'} : 'user',
                     frameRate: {ideal:10},
                     width: {ideal:1920},
                     height:{ideal:1440},
-                }
+                },
+
             })
             .then(srcObject=> {
                 _camera.drawDisplay();
@@ -107,6 +108,13 @@ const rtcCamera = {
             const {width} = camera.getFrameRect();
             camera.height = width * 1.7;
         };
+        camera.addEventListener('canplay', _=> {
+            const {offsetWidth:width, offsetHeight:height} = fram;
+            // console.log('fram', width, height, (camera.videoHeight / camera.videoWidth) * width);
+            // console.log('video', camera.videoWidth, camera.videoHeight);
+
+            Object.assign(camera, {width, height: (camera.videoHeight / camera.videoWidth) * width})
+        });
 
         // 디스플레이 가이드
         const guide = this._getDisplayGuide(option);
