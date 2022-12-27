@@ -61,8 +61,6 @@ const rtcCamera = {
         const canvas = Object.assign(document.createElement('canvas'), {width, height});
 
         console.log(width, height, _camera.offsetWidth, _camera.offsetHeight);
-        // _camera.width = width;
-        // _camera.height = height;
         const ctx = canvas.getContext('2d');
         // ctx.drawImage(_camera, 0, 0, width, height);
         ctx.drawImage(_camera, (width - _camera.offsetWidth)/2, (height - _camera.offsetHeight)/2, _camera.offsetWidth, _camera.offsetHeight);
