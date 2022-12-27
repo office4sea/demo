@@ -17,8 +17,7 @@
 <body>
     <div>
         <h2>RTC카메라</h2>
-        <button>카메라 내장형</button>
-        <button>카메라 팝업형</button>
+        <button>카메라 실행</button>
         <button>화면 캡쳐</button>
     </div>
 
@@ -50,9 +49,9 @@
         // shutter: 셔터 버튼 노출 여부
         //      onCapture: 셔터 버튼 이벤트시 수행될 리스너 등록
         rtcCamera.bindDisplay('#camera-cover', {
-            guide: {
-                size: '80%'
-            },
+            // guide: {
+            //     size: '80%'
+            // },
             shutter: {
                 onCapture(capture) {
                     printData(capture);
@@ -78,17 +77,15 @@
             }
         }
         const layer = document.querySelector('#layer');
-        const [embedd, popup, capture] = document.querySelectorAll('button');
-        // 카메라 내장형
-        embedd.addEventListener('click', _=> playCamera(_=> {
-            layer.isPopup = false;
-            // layer.style.cssText = 'display:block;';
-        }));
-        // 카메라 팝업형
-        popup.addEventListener('click', _=> playCamera(_=> {
-            layer.isPopup = true;
-            // layer.style.cssText = 'display:block; position:absolute; left:0; top:0; width:100vw; height:100vh; background:#fff;';
-        }));
+        const [embedd, capture] = document.querySelectorAll('button');
+        // 카메라 실행
+        embedd.addEventListener('click', _=> {
+            try {
+                rtcCamera.play();
+            } catch(error) {
+                alert(error);
+            }
+        });
         // 화면 캡쳐
         capture.addEventListener('click', _=> printData(rtcCamera.capture(), 'image/jpeg'));
     </script>

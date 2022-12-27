@@ -15,8 +15,6 @@ const rtcCamera = {
      * @param {*} _option 
      */
     bindDisplay(selector, _option={}) {
-        const cameraData = document.getElementById('camera-data');
-        cameraData.value = _option.version;
         const _camera = this._getCameraDisplay(selector, _option);
         Object.assign(this, {_camera, _option})
     },
@@ -52,13 +50,11 @@ const rtcCamera = {
         if(!_camera.srcObject) return;
         _camera.pause();
 
-        // const {offsetWidth:width, offsetHeight:height} = _camera;
-        const {width, height} = _camera.getFramRect();
+        const {width, height, videoWidth, videoHeight} = _camera.getRect();
         const canvas = Object.assign(document.createElement('canvas'), {width, height});
 
         const ctx = canvas.getContext('2d');
-        // ctx.drawImage(_camera, 0, 0, width, height);
-        ctx.drawImage(_camera, (width - _camera.offsetWidth)/2, (height - _camera.offsetHeight)/2, _camera.offsetWidth, _camera.offsetHeight);
+        ctx.drawImage(_camera, (width-videoWidth)/2, (height-videoHeight)/2, videoWidth, videoHeight);
 
         const getData = format=> canvas.toDataURL(format);
         const preview = selector=> {
@@ -71,9 +67,6 @@ const rtcCamera = {
     },
     getDevices() {
         return navigator.mediaDevices.enumerateDevices();
-    },
-    stop() {
-        this._removeCamera();
     },
 
     _getCameraDisplay(selector, option) {
@@ -91,11 +84,14 @@ const rtcCamera = {
             alignItems: 'center'
         }));
         const camera = fram.appendChild(this._makeEl('video'));
-        // camera.getFramRect = _=> {
-        //     const {offsetWidth:width, offsetHeight:height} = fram;
-        //     return {width, height};
-        // };
-        camera.getFramRect = _=> ({width: fram.offsetWidth, height: fram.offsetHeight});
+        camera.getRect = _=> {
+            const {videoWidth, videoHeight} = camera;
+            return {
+                videoWidth, videoHeight,
+                width: fram.offsetWidth,
+                height: fram.offsetHeight,
+            };
+        };
 
         const uiList = [];
         // 플레이 이벤트
@@ -155,8 +151,8 @@ const rtcCamera = {
             borderRadius: '50%',
             width: '50px',
             height: '50px',
-            left: 'calc(100% / 2 - 50px / 2)',
             bottom: '10%',
+            right: '10%',
             opacity: '.9',
             display: 'none'
         });
@@ -174,10 +170,9 @@ const rtcCamera = {
     },
     _makeEl(tag, style) {
         const el = document.createElement(tag);
-        const toCebab = v=> v.replace(/^\w/, v=>v.toLowerCase()).replace(/[A-Z]/g, v=>`-${v.toLowerCase()}`);
-
         if(style) {
-            el.style.cssText = Object.entries(style).map(([k, v])=>`${toCebab(k)}: ${v}`).join(';');
+            const cebab = v=> v.replace(/^\w/, v=>v.toLowerCase()).replace(/[A-Z]/g, v=>`-${v.toLowerCase()}`);
+            el.style.cssText = Object.entries(style).map(([k, v])=>`${cebab(k)}: ${v}`).join(';');
         }
         return el;
     }
