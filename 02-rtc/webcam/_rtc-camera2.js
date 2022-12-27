@@ -12,31 +12,33 @@ const rtcCamera = {
     /**
      * 디스플레이 엘리먼트 바인딩
      * @param {string} selector 
-     * @param {*} _option 
+     * @param {*} option 
      */
-    bindDisplay(selector, _option={}) {
-        const cameraData = document.getElementById('camera-data');
-        cameraData.value = _option.version;
-        const _camera = this._getCameraDisplay(selector, _option);
+    bindDisplay(selector, option={}) {
+        const _camera = this._getCameraDisplay(selector, option);
+        const _option = Object.assign({
+            isMobile: /android|iPhone/i.test(navigator.userAgent)
+        }, option);
         Object.assign(this, {_camera, _option})
     },
     /**
      * 카메라를 실행합니다.
      */
     play() {
-        const {_camera} = this;
+        const {_camera, _option} = this;
         if(!_camera) return Promise.reject('카메라 디스플레이가 초기화 되지 않았습니다.');
 
-        const isMobile = /android|iPhone/i.test(navigator.userAgent);
+        const {isMobile} = _option;
         return navigator.mediaDevices
             .getUserMedia({
                 audio: false,
                 video: {
-                    facingMode: isMobile ? {exact: 'environment'} : undefined,
-                    // frameRate: {ideal:5}
-                    // width: {ideal:1920},
-                    // height:{ideal:1440}
-                }
+                    facingMode: isMobile ? {exact:'environment'} : 'user',
+                    frameRate: {ideal:10},
+                    width: {ideal:1920},
+                    height:{ideal:1440},
+                },
+
             })
             .then(srcObject=> Object.assign(_camera, {srcObject}).play())
             .catch(reason=> {
@@ -53,9 +55,10 @@ const rtcCamera = {
         _camera.pause();
 
         // const {offsetWidth:width, offsetHeight:height} = _camera;
-        const {width, height} = _camera.getFramRect();
+        const {width, height} = _camera.getFrameRect();
         const canvas = Object.assign(document.createElement('canvas'), {width, height});
 
+        console.log(width, height, _camera.offsetWidth, _camera.offsetHeight);
         const ctx = canvas.getContext('2d');
         // ctx.drawImage(_camera, 0, 0, width, height);
         ctx.drawImage(_camera, (width - _camera.offsetWidth)/2, (height - _camera.offsetHeight)/2, _camera.offsetWidth, _camera.offsetHeight);
@@ -69,11 +72,11 @@ const rtcCamera = {
         };
         return {getData, preview};
     },
-    getDevices() {
-        return navigator.mediaDevices.enumerateDevices();
-    },
     stop() {
         this._removeCamera();
+    },
+    getDevices() {
+        return navigator.mediaDevices.enumerateDevices();
     },
 
     _getCameraDisplay(selector, option) {
@@ -91,15 +94,29 @@ const rtcCamera = {
             alignItems: 'center'
         }));
         const camera = fram.appendChild(this._makeEl('video'));
-        // camera.getFramRect = _=> {
-        //     const {offsetWidth:width, offsetHeight:height} = fram;
-        //     return {width, height};
-        // };
-        camera.getFramRect = _=> ({width: fram.offsetWidth, height: fram.offsetHeight});
 
         const uiList = [];
-        // 플레이 이벤트
+        camera.getFrameRect = _=> {
+            const {offsetWidth:width, offsetHeight:height} = fram;
+            return {width, height};
+        };
         camera.addEventListener('canplay', _=> {
+            const cameraData = document.querySelector('#camera-data');
+            const {offsetWidth:width, offsetHeight:height} = fram;
+            const {videoHeight, videoWidth} = camera;
+
+            console.log('fram', width, height, (camera.videoHeight / camera.videoWidth) * width);
+            console.log('video', camera.videoWidth, camera.videoHeight);
+cameraData.value = `fram: ${width}, ${height}
+video: ${camera.videoWidth}, ${camera.videoHeight}
+`;
+
+            // Object.assign(camera, {
+            //     width,
+            //     height: (videoHeight / videoWidth) * width
+            // });
+            camera.width = width;
+            camera.height = height;
             uiList.forEach(ui=> {ui.style.display = ''});
         });
 
@@ -176,9 +193,9 @@ const rtcCamera = {
         const el = document.createElement(tag);
         const toCebab = v=> v.replace(/^\w/, v=>v.toLowerCase()).replace(/[A-Z]/g, v=>`-${v.toLowerCase()}`);
 
-        if(style) {
-            el.style.cssText = Object.entries(style).map(([k, v])=>`${toCebab(k)}: ${v}`).join(';');
-        }
+        style && Object.assign(el.style, {
+            cssText: Object.entries(style).map(([k, v])=>`${toCebab(k)}: ${v}`).join(';')
+        });
         return el;
     }
 };
