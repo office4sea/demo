@@ -40,7 +40,7 @@ const rtcCamera = {
                 }
             })
             .then(srcObject=> {
-                _camera.reDrawDisplay();
+                _camera.drawDisplay();
                 Object.assign(_camera, {srcObject}).showUi().play()
             })
             .catch(reason=> {
@@ -61,6 +61,8 @@ const rtcCamera = {
         const canvas = Object.assign(document.createElement('canvas'), {width, height});
 
         console.log(width, height, _camera.offsetWidth, _camera.offsetHeight);
+        _camera.width = width;
+        _camera.height = height;
         const ctx = canvas.getContext('2d');
         // ctx.drawImage(_camera, 0, 0, width, height);
         ctx.drawImage(_camera, (width - _camera.offsetWidth)/2, (height - _camera.offsetHeight)/2, _camera.offsetWidth, _camera.offsetHeight);
@@ -103,9 +105,9 @@ const rtcCamera = {
             const {offsetWidth:width, offsetHeight:height} = fram;
             return {width, height};
         };
-        camera.reDrawDisplay = _=> {
-            const {width, height} = camera.getFrameRect();
-            camera.height = width * 2;
+        camera.drawDisplay = _=> {
+            const {width} = camera.getFrameRect();
+            camera.height = width * 1.7;
         };
 
         // 디스플레이 가이드
