@@ -28,7 +28,7 @@
     </div>
 
     <hr/>
-    <img id="camera-image" src="#">
+    <img id="camera-image" src="#" style="max-width: 100%;">
     <textarea id="camera-data" style="width:100%; height:50vw;">15</textarea>
 
     <script src="rtc-camera.js?15"></script>
@@ -50,9 +50,9 @@
         // shutter: 셔터 버튼 노출 여부
         //      onCapture: 셔터 버튼 이벤트시 수행될 리스너 등록
         rtcCamera.bindDisplay('#camera-cover', {
-            // guide: {
-            //     size: '80%'
-            // },
+            guide: {
+                size: '80%'
+            },
             shutter: {
                 onCapture(capture) {
                     printData(capture);
