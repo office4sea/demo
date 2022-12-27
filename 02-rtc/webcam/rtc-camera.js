@@ -40,10 +40,7 @@ const rtcCamera = {
                 },
 
             })
-            .then(srcObject=> {
-                _camera.drawDisplay();
-                Object.assign(_camera, {srcObject}).showUi().play()
-            })
+            .then(srcObject=> Object.assign(_camera, {srcObject}).play())
             .catch(reason=> {
                 console.error(reason);
                 return Promise.reject('카메라 접근 권한이 처리되지 못했습니다.');
@@ -99,27 +96,26 @@ const rtcCamera = {
         const camera = fram.appendChild(this._makeEl('video'));
 
         const uiList = [];
-        camera.showUi = _=> (uiList.forEach(ui=> {ui.style.display = ''}), camera);
         camera.getFrameRect = _=> {
             const {offsetWidth:width, offsetHeight:height} = fram;
             return {width, height};
         };
-        camera.drawDisplay = _=> {
-            // const {width} = camera.getFrameRect();
-            // camera.height = width * 1.7;
-        };
         camera.addEventListener('canplay', _=> {
             const cameraData = document.querySelector('#camera-data');
             const {offsetWidth:width, offsetHeight:height} = fram;
+            const {videoHeight, videoWidth} = camera;
 
             console.log('fram', width, height, (camera.videoHeight / camera.videoWidth) * width);
             console.log('video', camera.videoWidth, camera.videoHeight);
-
 cameraData.value = `fram: ${width}, ${height}
 video: ${camera.videoWidth}, ${camera.videoHeight}
 `;
 
-            Object.assign(camera, {width, height: (camera.videoHeight / camera.videoWidth) * width})
+            Object.assign(camera, {
+                width,
+                height: (videoHeight / videoWidth) * width
+            });
+            uiList.forEach(ui=> {ui.style.display = ''});
         });
 
         // 디스플레이 가이드
