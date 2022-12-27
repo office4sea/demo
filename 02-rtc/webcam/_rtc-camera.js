@@ -12,38 +12,33 @@ const rtcCamera = {
     /**
      * 디스플레이 엘리먼트 바인딩
      * @param {string} selector 
-     * @param {*} option 
+     * @param {*} _option 
      */
-    bindDisplay(selector, option={}) {
-        const _camera = this._getCameraDisplay(selector, option);
-        const _option = Object.assign({
-            isMobile: /android|iPhone/i.test(navigator.userAgent)
-        }, option);
+    bindDisplay(selector, _option={}) {
+        const cameraData = document.getElementById('camera-data');
+        cameraData.value = _option.version;
+        const _camera = this._getCameraDisplay(selector, _option);
         Object.assign(this, {_camera, _option})
     },
     /**
      * 카메라를 실행합니다.
      */
     play() {
-        const {_camera, _option} = this;
+        const {_camera} = this;
         if(!_camera) return Promise.reject('카메라 디스플레이가 초기화 되지 않았습니다.');
 
-        const {isMobile} = _option;
+        const isMobile = /android|iPhone/i.test(navigator.userAgent);
         return navigator.mediaDevices
             .getUserMedia({
                 audio: false,
                 video: {
-                    facingMode: isMobile ? {exact:'environment'} : 'user',
-                    frameRate: {ideal:10},
-                    width: {ideal:1920},
-                    height:{ideal:1440},
-                },
-
+                    facingMode: isMobile ? {exact: 'environment'} : undefined,
+                    // frameRate: {ideal:5}
+                    // width: {ideal:1920},
+                    // height:{ideal:1440}
+                }
             })
-            .then(srcObject=> {
-                _camera.drawDisplay();
-                Object.assign(_camera, {srcObject}).showUi().play()
-            })
+            .then(srcObject=> Object.assign(_camera, {srcObject}).showUi().play())
             .catch(reason=> {
                 console.error(reason);
                 return Promise.reject('카메라 접근 권한이 처리되지 못했습니다.');
@@ -57,14 +52,11 @@ const rtcCamera = {
         if(!_camera.srcObject) return;
         _camera.pause();
 
-        // const {offsetWidth:width, offsetHeight:height} = _camera;
-        const {width, height} = _camera.getFrameRect();
+        const {offsetWidth:width, offsetHeight:height} = _camera;
         const canvas = Object.assign(document.createElement('canvas'), {width, height});
 
-        console.log(width, height, _camera.offsetWidth, _camera.offsetHeight);
         const ctx = canvas.getContext('2d');
-        // ctx.drawImage(_camera, 0, 0, width, height);
-        ctx.drawImage(_camera, (width - _camera.offsetWidth)/2, (height - _camera.offsetHeight)/2, _camera.offsetWidth, _camera.offsetHeight);
+        ctx.drawImage(_camera, 0, 0, width, height);
 
         const getData = format=> canvas.toDataURL(format);
         const preview = selector=> {
@@ -77,9 +69,6 @@ const rtcCamera = {
     },
     stop() {
         this._removeCamera();
-    },
-    getDevices() {
-        return navigator.mediaDevices.enumerateDevices();
     },
 
     _getCameraDisplay(selector, option) {
@@ -96,31 +85,13 @@ const rtcCamera = {
             justifyContent: 'center',
             alignItems: 'center'
         }));
-        const camera = fram.appendChild(this._makeEl('video'));
+        const camera = fram.appendChild(this._makeEl('video', {
+            width: '100vh',
+            height: '100vw'
+        }));
 
         const uiList = [];
         camera.showUi = _=> (uiList.forEach(ui=> {ui.style.display = ''}), camera);
-        camera.getFrameRect = _=> {
-            const {offsetWidth:width, offsetHeight:height} = fram;
-            return {width, height};
-        };
-        camera.drawDisplay = _=> {
-            // const {width} = camera.getFrameRect();
-            // camera.height = width * 1.7;
-        };
-        camera.addEventListener('canplay', _=> {
-            const cameraData = document.querySelector('#camera-data');
-            const {offsetWidth:width, offsetHeight:height} = fram;
-
-            console.log('fram', width, height, (camera.videoHeight / camera.videoWidth) * width);
-            console.log('video', camera.videoWidth, camera.videoHeight);
-
-cameraData.value = `fram: ${width}, ${height}
-video: ${camera.videoWidth}, ${camera.videoHeight}
-`;
-
-            Object.assign(camera, {width, height: (camera.videoHeight / camera.videoWidth) * width})
-        });
 
         // 디스플레이 가이드
         const guide = this._getDisplayGuide(option);
@@ -195,9 +166,7 @@ video: ${camera.videoWidth}, ${camera.videoHeight}
         const el = document.createElement(tag);
         const toCebab = v=> v.replace(/^\w/, v=>v.toLowerCase()).replace(/[A-Z]/g, v=>`-${v.toLowerCase()}`);
 
-        style && Object.assign(el.style, {
-            cssText: Object.entries(style).map(([k, v])=>`${toCebab(k)}: ${v}`).join(';')
-        });
+        el.style.cssText = Object.entries(style).map(([k, v])=>`${toCebab(k)}: ${v}`).join(';');
         return el;
     }
 };
