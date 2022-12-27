@@ -7,8 +7,8 @@
     <title>RTC카메라</title>
     <style>
     #camera-cover {
-        width: 300px;
-        height: 300px;
+        width: 100vw;
+        height: calc((100vw / 16) * 9);
         border: solid 1px #000;
         padding: 0;
     }
@@ -31,7 +31,7 @@
     <img id="camera-image" src="#" style="max-width: 100%;">
     <textarea id="camera-data" style="width:100%; height:50vw;"></textarea>
 
-    <script src="rtc-camera.js?21"></script>
+    <script src="rtc-camera.js?23"></script>
     <script>
         const printData = (capture, format)=> {
             if(!capture) return;
