@@ -30,7 +30,7 @@ const rtcCamera = {
             .getUserMedia({
                 audio: false,
                 video: {
-                    facingMode: isMobile ? {exact: 'environment'} : undefined,
+                    facingMode: isMobile ? {exact: 'environment'} : 'user',
                     // frameRate: {ideal:5}
                     // width: {ideal:1920},
                     // height:{ideal:1440}
